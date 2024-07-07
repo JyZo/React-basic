@@ -12,11 +12,10 @@ function App() {
   ]);
 
   let [logo, setLogo] = useState("ReactBlog");
-  let [good, setGood] = useState(0);
-
-  const goodUp = () => {
-    setGood(good + 1);
-  };
+  let [good, setGood] = useState([0, 0, 0]);
+  let [modal, setModal] = useState(false);
+  let [titleIdx, settitleIdx] = useState(0);
+  let [inputVal, setinputVal] = useState("");
 
   const changeTitle = () => {
     let copy = [...title];
@@ -29,6 +28,12 @@ function App() {
     sortcopy.sort();
     setTitle(sortcopy);
   };
+
+  const onDelete = (idx) => {
+    const newTitle = title.filter((_, delIdx) => delIdx !== idx);
+    setTitle(newTitle);
+  };
+
   return (
     <div className="App">
       <div className="black-nav">
@@ -37,29 +42,76 @@ function App() {
       <h4>{logo}</h4>
       <button onClick={changeTitle}>코트값 변경</button>
       <button onClick={sortTitle}>글 순서 정렬</button>
-      <div className="list">
-        <h4>
-          {title[0]}
-          <span
-            onClick={() => {
-              goodUp();
-            }}
-          >
-            🏆
-          </span>{" "}
-          {good}{" "}
-        </h4>
-        <p>2월 18일 발행</p>
-      </div>
-      <div className="list">
-        <h4>{title[1]}</h4>
-        <p>2월 18일 발행</p>
-      </div>
-      <div className="list">
-        <h4>{title[2]}</h4>
-        <p>2월 19일 발행</p>
-      </div>
       <h4>{post}</h4>
+      {title.map(function (titleVal, idx) {
+        console.log(titleVal);
+        return (
+          <div className="list" key={idx}>
+            <h4
+              onClick={() => {
+                modal == false ? setModal(true) : setModal(false);
+                settitleIdx(idx);
+              }}
+            >
+              {titleVal}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  let goodcopy = [...good];
+                  goodcopy[idx] = good[idx] + 1;
+                  setGood(goodcopy);
+                }}
+              >
+                🏆
+              </span>{" "}
+              {good[idx]}
+            </h4>
+            <p>2월 19일 발행</p>
+            <button
+              onClick={() => {
+                console.log("delete[" + idx + "]");
+                onDelete(idx);
+              }}
+            >
+              글 삭제
+            </button>
+          </div>
+        );
+      })}
+
+      <input
+        onChange={(e) => {
+          setinputVal(e.target.value);
+          console.log(inputVal);
+        }}
+      ></input>
+      <button
+        onClick={() => {
+          setTitle(title.concat(inputVal));
+        }}
+      >
+        글 추가
+      </button>
+
+      {modal == true ? (
+        <Modal
+          color="gold"
+          title={title}
+          changeTitle={changeTitle}
+          titleIdx={titleIdx}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function Modal(props) {
+  return (
+    <div className="modal" style={{ background: props.color }}>
+      <h4>{props.title[props.titleIdx]}</h4>
+      <p>title</p>
+      <p>상세내용</p>
+      <button onClick={props.changeTitle}>글수정</button>
     </div>
   );
 }
