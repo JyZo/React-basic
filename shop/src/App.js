@@ -8,9 +8,12 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import bg from "./img/bg.jpg";
 import { useState } from "react";
 import data from "./data";
+import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
+import Detail from "./detail";
 
 function App() {
   let [shoes] = useState(data);
+  let navigate = useNavigate();
   console.log(shoes[0].title);
   return (
     <div className="App">
@@ -20,8 +23,20 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Cart</Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Home
+              </Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  navigate("/detail");
+                }}
+              >
+                Detail
+              </Nav.Link>
               <NavDropdown title="SubMenu" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">
@@ -39,20 +54,44 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <div className="bg-container">
-        <div
-          className="main-bg"
-          style={{ backgroundImage: "url(" + bg + ")" }}
-        ></div>
-      </div>
-      <div className="container">
-        <div className="row">
-          {shoes.map(function (shoe, idx) {
-            return <Item shoes={shoes[idx]}></Item>;
-          })}
-          ;
-        </div>
-      </div>
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <div className="bg-container">
+                <div
+                  className="main-bg"
+                  style={{ backgroundImage: "url(" + bg + ")" }}
+                ></div>
+              </div>
+              <div className="container">
+                <div className="row">
+                  {shoes.map(function (shoe, idx) {
+                    return <Item shoes={shoes[idx]}></Item>;
+                  })}
+                  ;
+                </div>
+              </div>
+            </>
+          }
+        ></Route>
+
+        <Route path="/detail/:id" element={<Detail shoes={shoes} />}></Route>
+
+        <Route path="/about" element={<About />}>
+          <Route path="member" element={<div>member</div>}></Route>
+          <Route path="location" element={<div>location</div>}></Route>
+        </Route>
+
+        <Route path="/event" element={<Event />}>
+          <Route path="one" element={<p>첫 주문시 양배추즙 서비스</p>}></Route>
+          <Route path="two" element={<p>생일기념 쿠폰받기</p>}></Route>
+        </Route>
+
+        <Route path="*" element={<div>404 ERR</div>}></Route>
+      </Routes>
     </div>
   );
 }
@@ -64,6 +103,24 @@ function Item(props) {
       <h4>{props.shoes.title}</h4>
       <p>{props.shoes.content}</p>
       <p>{props.shoes.price} 원</p>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div>
+      <h4>company info</h4>
+      <Outlet></Outlet>
+    </div>
+  );
+}
+
+function Event() {
+  return (
+    <div>
+      <h4>오늘의이벤트</h4>
+      <Outlet></Outlet>
     </div>
   );
 }
