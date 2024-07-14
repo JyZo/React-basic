@@ -10,11 +10,12 @@ import { useState } from "react";
 import data from "./data";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./detail";
+import axios from "axios";
 
 function App() {
-  let [shoes] = useState(data);
+  let [shoes, setShoes] = useState(data);
   let navigate = useNavigate();
-  console.log(shoes[0].title);
+
   return (
     <div className="App">
       <Navbar bg="primary" data-bs-theme="dark">
@@ -74,6 +75,21 @@ function App() {
                   ;
                 </div>
               </div>
+              <button
+                onClick={() => {
+                  axios
+                    .get("https://codingapple1.github.io/shop/data3.json")
+                    .then((result) => {
+                      console.log(result.data);
+                      setShoes(shoes.concat(result.data));
+                    })
+                    .catch(() => {
+                      console.log("axios fail");
+                    });
+                }}
+              >
+                Ajaxbutton
+              </button>
             </>
           }
         ></Route>
