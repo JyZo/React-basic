@@ -6,14 +6,18 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import bg from "./img/bg.jpg";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import data from "./data";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./detail";
 import axios from "axios";
 
+export let Context1 = createContext();
+
 function App() {
   let [shoes, setShoes] = useState(data);
+  let [stock] = useState([10, 11, 12]);
+
   let navigate = useNavigate();
 
   return (
@@ -93,19 +97,22 @@ function App() {
             </>
           }
         ></Route>
-
-        <Route path="/detail/:id" element={<Detail shoes={shoes} />}></Route>
-
+        <Route
+          path="/detail/:id"
+          element={
+            <Context1.Provider value={stock}>
+              <Detail shoes={shoes} />
+            </Context1.Provider>
+          }
+        ></Route>
         <Route path="/about" element={<About />}>
           <Route path="member" element={<div>member</div>}></Route>
           <Route path="location" element={<div>location</div>}></Route>
         </Route>
-
         <Route path="/event" element={<Event />}>
           <Route path="one" element={<p>첫 주문시 양배추즙 서비스</p>}></Route>
           <Route path="two" element={<p>생일기념 쿠폰받기</p>}></Route>
         </Route>
-
         <Route path="*" element={<div>404 ERR</div>}></Route>
       </Routes>
     </div>

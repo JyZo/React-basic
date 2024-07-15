@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import Nav from "react-bootstrap/Nav";
+import { Context1 } from "../src/App";
 
 // let YellownBtn = styled.button`
 //   background: yellow;
@@ -18,7 +20,10 @@ function Detail(props) {
   let [count, setCount] = useState(0);
   let [alertt, setAlert] = useState(true);
   let [input, setInput] = useState();
+  let [tab, setTab] = useState(1);
   let { id } = useParams();
+
+  let stockContext = useContext(Context1);
 
   useEffect(() => {
     let a = setTimeout(() => {
@@ -32,18 +37,15 @@ function Detail(props) {
     };
   }, []);
 
-  useEffect(
-    (e) => {
-      // let inputId = document.getElementById(e.target.id);
-      // let inputVal = Number(e.target.value);
-      if (isNaN(input)) {
-        alert("plz input number");
-        // inputId.value = null;
-        return;
-      }
-    },
-    [input]
-  );
+  useEffect(() => {
+    // let inputId = document.getElementById(e.target.id);
+    // let inputVal = Number(e.target.value);
+    if (isNaN(input)) {
+      console.log("plz input number");
+      // inputId.value = null;
+      return;
+    }
+  }, [input]);
 
   let result = props.shoes.find(
     function (item) {
@@ -87,6 +89,71 @@ function Detail(props) {
         <ColorBtn bg="gold">gbt</ColorBtn> */}
         </div>
       </div>
+      <Nav variant="tabs" defaultActiveKey="link0">
+        <Nav.Item>
+          <Nav.Link
+            eventKey="link0"
+            onClick={() => {
+              setTab(0);
+            }}
+          >
+            버튼0
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link
+            eventKey="link1"
+            onClick={() => {
+              setTab(1);
+            }}
+          >
+            버튼1
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link
+            eventKey="link2"
+            onClick={() => {
+              setTab(2);
+            }}
+          >
+            버튼2
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+      {stockContext}
+      <TabContent tab={tab}></TabContent>
+    </div>
+  );
+}
+
+function TabContent(props) {
+  let [fade, setFade] = useState("");
+  let { stockContext } = useContext(Context1);
+  // if (props.tab === 0) {
+  //   return <div>내용0</div>;
+  // } else if (props.tab === 1) {
+  //   return <div>내용1</div>;
+  // } else if (props.tab === 2) {
+  //   return <div>내용2</div>;
+  // }
+  useEffect(() => {
+    setTimeout(() => {
+      setFade("end");
+    }, 100);
+
+    return () => {
+      clearTimeout();
+      setFade("");
+    };
+  }, [props.tab]);
+  return (
+    <div className={"start " + fade}>
+      {
+        [<div>내용0 {stockContext}</div>, <div>내용1</div>, <div>내용2</div>][
+          props.tab
+        ]
+      }
     </div>
   );
 }
