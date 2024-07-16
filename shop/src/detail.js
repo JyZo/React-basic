@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Nav from "react-bootstrap/Nav";
-import { Context1 } from "../src/App";
+import { useDispatch, useSelector } from "react-redux";
+import { Context1 } from "./App";
+import { countUp, cartAdd } from "./store";
 
 // let YellownBtn = styled.button`
 //   background: yellow;
@@ -24,6 +26,12 @@ function Detail(props) {
   let { id } = useParams();
 
   let stockContext = useContext(Context1);
+
+  // let reduxState = useSelector((state) => {
+  //   return state;
+  // });
+  let dispatch = useDispatch();
+  // console.log(reduxState.cart);
 
   useEffect(() => {
     let a = setTimeout(() => {
@@ -71,7 +79,14 @@ function Detail(props) {
           <h4 className="pt-5">{result.title}</h4>
           <p>{result.content}</p>
           <p>{result.price}</p>
-          <button className="btn btn-danger">주문하기</button>
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              dispatch(cartAdd({ cart: 111 }));
+            }}
+          >
+            주문하기
+          </button>
           {count}
           <button
             onClick={() => {

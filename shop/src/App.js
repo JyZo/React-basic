@@ -9,14 +9,15 @@ import bg from "./img/bg.jpg";
 import { createContext, useState } from "react";
 import data from "./data";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
-import Detail from "./detail";
+import Detail from "./Detail.js";
 import axios from "axios";
+import Cart from "./Cart.js";
 
 export let Context1 = createContext();
 
 function App() {
   let [shoes, setShoes] = useState(data);
-  let [stock] = useState([10, 11, 12]);
+  let [stocks] = useState([10, 11, 12]);
 
   let navigate = useNavigate();
 
@@ -74,9 +75,8 @@ function App() {
               <div className="container">
                 <div className="row">
                   {shoes.map(function (shoe, idx) {
-                    return <Item shoes={shoes[idx]}></Item>;
+                    return <Item key={idx} shoes={shoes[idx]}></Item>;
                   })}
-                  ;
                 </div>
               </div>
               <button
@@ -100,7 +100,7 @@ function App() {
         <Route
           path="/detail/:id"
           element={
-            <Context1.Provider value={stock}>
+            <Context1.Provider value={stocks}>
               <Detail shoes={shoes} />
             </Context1.Provider>
           }
@@ -113,6 +113,7 @@ function App() {
           <Route path="one" element={<p>첫 주문시 양배추즙 서비스</p>}></Route>
           <Route path="two" element={<p>생일기념 쿠폰받기</p>}></Route>
         </Route>
+        <Route path="/cart" element={<Cart />}></Route>
         <Route path="*" element={<div>404 ERR</div>}></Route>
       </Routes>
     </div>
