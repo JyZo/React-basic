@@ -31,10 +31,15 @@ let cart = createSlice({
         count: 33,
       });
     },
+    addItem(state, action) {
+      console.log(state[0]);
+      console.log(action.payload);
+      state.push(action.payload);
+    },
   },
 });
 
-export let { countUp, cartAdd } = cart.actions;
+export let { countUp, cartAdd, addItem } = cart.actions;
 
 export default configureStore({
   reducer: {

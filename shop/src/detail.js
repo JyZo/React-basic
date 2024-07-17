@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Nav from "react-bootstrap/Nav";
 import { useDispatch, useSelector } from "react-redux";
 import { Context1 } from "./App";
-import { countUp, cartAdd } from "./store";
+import { countUp, cartAdd, addItem } from "./store";
 
 // let YellownBtn = styled.button`
 //   background: yellow;
@@ -27,11 +27,11 @@ function Detail(props) {
 
   let stockContext = useContext(Context1);
 
-  // let reduxState = useSelector((state) => {
-  //   return state;
-  // });
+  let reduxState = useSelector((state) => {
+    return state;
+  });
   let dispatch = useDispatch();
-  // console.log(reduxState.cart);
+  console.log(reduxState);
 
   useEffect(() => {
     let a = setTimeout(() => {
@@ -82,7 +82,8 @@ function Detail(props) {
           <button
             className="btn btn-danger"
             onClick={() => {
-              dispatch(cartAdd({ cart: 111 }));
+              // dispatch(cartAdd({ cart: 111 }));
+              dispatch(addItem({ id: 3, name: "Red Knit", count: 1 }));
             }}
           >
             주문하기

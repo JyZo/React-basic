@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { ageUp, changeName } from "./store/userSlice";
-import { countUp } from "./store";
+import { countUp, addItem } from "./store";
 
 function Cart() {
   let reduxState = useSelector((state) => {
     return state;
   });
   let dispatch = useDispatch();
-  console.log(reduxState.cart);
+  console.log(reduxState);
 
   return (
     <div>

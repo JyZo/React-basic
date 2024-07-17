@@ -6,7 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import bg from "./img/bg.jpg";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import data from "./data";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./Detail.js";
@@ -20,6 +20,17 @@ function App() {
   let [stocks] = useState([10, 11, 12]);
 
   let navigate = useNavigate();
+
+  let obj = { name: "kim" };
+
+  localStorage.setItem("data", JSON.stringify(obj));
+  let getData = localStorage.getItem("data");
+
+  console.log(JSON.parse(getData).name);
+
+  useEffect(() => {
+    localStorage.setItem("watched", JSON.stringify([]));
+  }, []);
 
   return (
     <div className="App">
@@ -42,6 +53,13 @@ function App() {
                 }}
               >
                 Detail
+              </Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  navigate("/cart");
+                }}
+              >
+                Cart
               </Nav.Link>
               <NavDropdown title="SubMenu" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -75,7 +93,17 @@ function App() {
               <div className="container">
                 <div className="row">
                   {shoes.map(function (shoe, idx) {
-                    return <Item key={idx} shoes={shoes[idx]}></Item>;
+                    return (
+                      <div>
+                        <Nav.Link
+                          onClick={() => {
+                            navigate("/detail/" + shoe.id);
+                          }}
+                        >
+                          <Item key={idx} shoes={shoes[idx]}></Item>
+                        </Nav.Link>
+                      </div>
+                    );
                   })}
                 </div>
               </div>
@@ -121,6 +149,8 @@ function App() {
 }
 
 function Item(props) {
+  console.log("shoes list");
+  console.log(props.shoes);
   return (
     <div className="col-md-4">
       <img src={props.shoes.img} width="80%"></img>
