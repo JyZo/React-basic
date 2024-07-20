@@ -24,6 +24,12 @@ function Detail(props) {
   let [input, setInput] = useState();
   let [tab, setTab] = useState(1);
   let { id } = useParams();
+  let result = props.shoes.find(
+    function (item) {
+      return item.id == id;
+    },
+    [input]
+  );
 
   let stockContext = useContext(Context1);
 
@@ -32,6 +38,18 @@ function Detail(props) {
   });
   let dispatch = useDispatch();
   console.log(reduxState);
+
+  useEffect(() => {
+    console.log(result.id);
+    let getItem = localStorage.getItem("watched");
+    getItem = JSON.parse(getItem);
+    getItem.push(result.id);
+    getItem = new Set(getItem);
+    getItem = Array.from(getItem);
+    console.log("---------------------------------");
+    console.log(getItem);
+    localStorage.setItem("watched", JSON.stringify(getItem));
+  }, []);
 
   useEffect(() => {
     let a = setTimeout(() => {
@@ -54,13 +72,6 @@ function Detail(props) {
       return;
     }
   }, [input]);
-
-  let result = props.shoes.find(
-    function (item) {
-      return item.id == id;
-    },
-    [input]
-  );
 
   return (
     <div className="container">
