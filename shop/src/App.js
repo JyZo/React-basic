@@ -6,18 +6,32 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import bg from "./img/bg.jpg";
-import { createContext, useEffect, useState } from "react";
+import {
+  createContext,
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import data from "./data";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
-import Detail from "./Detail.js";
+// import Detail from "./Detail.js";
+// import Cart from "./Cart.js";
 import axios from "axios";
-import Cart from "./Cart.js";
+import { useQuery } from "react-query";
+
+const Detail = lazy(() => import("./Detail.js"));
+const Cart = lazy(() => import("./Cart.js"));
 
 export let Context1 = createContext();
 
 function App() {
   let [shoes, setShoes] = useState(data);
   let [stocks] = useState([10, 11, 12]);
+  let [name, setName] = useState("");
+  let maan = new Array(10000).fill(0);
+  let [isPending, startTransition] = useTransition();
 
   let navigate = useNavigate();
 
@@ -25,8 +39,15 @@ function App() {
 
   localStorage.setItem("data", JSON.stringify(obj));
   let getData = localStorage.getItem("data");
-
   console.log(JSON.parse(getData).name);
+
+  let result = useQuery("reactQueryTest", () => {
+    return axios
+      .get("https://codingapple1.github.io/userdata.json")
+      .then((a) => {
+        return a.data;
+      });
+  });
 
   useEffect(() => {
     localStorage.setItem("watched", JSON.stringify([]));
@@ -75,75 +96,98 @@ function App() {
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>
+            <Nav className="ms-auto">
+              {result.isLoading && "loading"}
+              {result.error && "error"}
+              {result.data && result.data.name}
+            </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <div className="bg-container">
-                <div
-                  className="main-bg"
-                  style={{ backgroundImage: "url(" + bg + ")" }}
-                ></div>
-              </div>
-              <div className="container">
-                <div className="row">
-                  {shoes.map(function (shoe, idx) {
-                    return (
-                      <div>
-                        <Nav.Link
-                          onClick={() => {
-                            navigate("/detail/" + shoe.id);
-                          }}
-                        >
-                          <Item key={idx} shoes={shoes[idx]}></Item>
-                        </Nav.Link>
-                      </div>
-                    );
-                  })}
+      <Suspense fallback={<div>Loading~~</div>}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <div className="bg-container">
+                  <div
+                    className="main-bg"
+                    style={{ backgroundImage: "url(" + bg + ")" }}
+                  ></div>
                 </div>
-              </div>
-              <button
-                onClick={() => {
-                  axios
-                    .get("https://codingapple1.github.io/shop/data3.json")
-                    .then((result) => {
-                      console.log(result.data);
-                      setShoes(shoes.concat(result.data));
-                    })
-                    .catch(() => {
-                      console.log("axios fail");
+                <div className="container">
+                  <div className="row">
+                    {shoes.map(function (shoe, idx) {
+                      return (
+                        <div>
+                          <Nav.Link
+                            onClick={() => {
+                              navigate("/detail/" + shoe.id);
+                            }}
+                          >
+                            <Item key={idx} shoes={shoes[idx]}></Item>
+                          </Nav.Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    axios
+                      .get("https://codingapple1.github.io/shop/data3.json")
+                      .then((result) => {
+                        console.log(result.data);
+                        setShoes(shoes.concat(result.data));
+                      })
+                      .catch(() => {
+                        console.log("axios fail");
+                      });
+                  }}
+                >
+                  Ajaxbutton
+                </button>
+                <br></br>
+                <input
+                  onChange={(e) => {
+                    startTransition(() => {
+                      setName(e.target.value);
                     });
-                }}
-              >
-                Ajaxbutton
-              </button>
-            </>
-          }
-        ></Route>
-        <Route
-          path="/detail/:id"
-          element={
-            <Context1.Provider value={stocks}>
-              <Detail shoes={shoes} />
-            </Context1.Provider>
-          }
-        ></Route>
-        <Route path="/about" element={<About />}>
-          <Route path="member" element={<div>member</div>}></Route>
-          <Route path="location" element={<div>location</div>}></Route>
-        </Route>
-        <Route path="/event" element={<Event />}>
-          <Route path="one" element={<p>첫 주문시 양배추즙 서비스</p>}></Route>
-          <Route path="two" element={<p>생일기념 쿠폰받기</p>}></Route>
-        </Route>
-        <Route path="/cart" element={<Cart />}></Route>
-        <Route path="*" element={<div>404 ERR</div>}></Route>
-      </Routes>
+                  }}
+                />
+                {isPending
+                  ? "Loading~~"
+                  : maan.map(() => {
+                      return <div>{name}</div>;
+                    })}
+              </>
+            }
+          ></Route>
+          <Route
+            path="/detail/:id"
+            element={
+              <Context1.Provider value={stocks}>
+                <Detail shoes={shoes} />
+              </Context1.Provider>
+            }
+          ></Route>
+          <Route path="/about" element={<About />}>
+            <Route path="member" element={<div>member</div>}></Route>
+            <Route path="location" element={<div>location</div>}></Route>
+          </Route>
+          <Route path="/event" element={<Event />}>
+            <Route
+              path="one"
+              element={<p>첫 주문시 양배추즙 서비스</p>}
+            ></Route>
+            <Route path="two" element={<p>생일기념 쿠폰받기</p>}></Route>
+          </Route>
+          <Route path="/cart" element={<Cart />}></Route>
+          <Route path="*" element={<div>404 ERR</div>}></Route>
+        </Routes>
+      </Suspense>
     </div>
   );
 }

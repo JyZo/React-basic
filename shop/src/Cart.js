@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { ageUp, changeName } from "./store/userSlice";
 import { countUp, addItem } from "./store";
+
+let Child = memo(function () {
+  console.log("child rerendering");
+  return <div>CHILDDDDDDD!</div>;
+});
 
 function Cart() {
   let reduxState = useSelector((state) => {
@@ -11,8 +16,18 @@ function Cart() {
   let dispatch = useDispatch();
   console.log(reduxState);
 
+  let [count, setCount] = useState(0);
+
   return (
     <div>
+      <Child count={count}></Child>
+      <button
+        onClick={() => {
+          setCount(count + 1);
+        }}
+      >
+        +
+      </button>
       {reduxState.user.name} 's CART || AGE : {reduxState.user.age}
       <button
         onClick={() => {

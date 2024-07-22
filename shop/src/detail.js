@@ -18,6 +18,8 @@ import { countUp, cartAdd, addItem } from "./store";
 //   padding: 10px;
 // `;
 
+var a = 0;
+
 function Detail(props) {
   let [count, setCount] = useState(0);
   let [alertt, setAlert] = useState(true);
@@ -38,6 +40,10 @@ function Detail(props) {
   });
   let dispatch = useDispatch();
   console.log(reduxState);
+
+  for (var i = 0; i < 1e9; i++) {
+    a = i;
+  }
 
   useEffect(() => {
     console.log(result.id);
